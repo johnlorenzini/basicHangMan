@@ -17,7 +17,8 @@ Two routes of functionality:
 To revisit & revise:
   - Rewrite the program utilizing proper object-oriented etiquette (Classes, constructor methods etc)
   - Implement the "hint" system for Player Versus Player, allowing the Wordmaker to either set their own hint or automatically search for a definition.
-  - Sometimes "hint" definitions scraped from website includes the secret word, so I'd like to implement a simple check for these cases and replace with *'s
+  (FIXED IN LATEST COMMIT) Sometimes "hint" definitions scraped from website includes the secret word, so I'd like to implement a simple
+                           check for these cases and replace with *'s
   
 End goal:
   - Rewrite the program using tkinter libraries to deliver an interactive graphic experience rather than utilizing the terminal.
