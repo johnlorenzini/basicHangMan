@@ -35,7 +35,28 @@ def getHint(word):
     while test[ind:ind + 1] != " ":
         test = test[ind + 1:]
     hint = test.strip()
-    return test.strip()
+    if word.lower() in hint:
+        spacing()
+        print("Secret word found in hint! Anonymizing...")
+        time.sleep(1)
+        words = hint.split()
+        numAsterisk = '*' * len(word)
+        index = 0
+        for i in words:
+            if i == word.lower():
+                words[index] = numAsterisk
+            index += 1
+        return " ".join(words)
+    else:
+        return hint
+
+
+def guesserWin(solved):
+    spacing()
+    print("-=-=-=-=-=-=-   Correct! The Secret Word Was:   -=-=-=-=-=-=-")
+    print("-=-=-=-=-=-=-          " + solved + "           -=-=-=-=-=-=-")
+    print("-=-=-=-=-=-=-        " + name1 + " Wins!        -=-=-=-=-=-=-")
+    time.sleep(5)
 
 
 if __name__ == '__main__':
@@ -56,7 +77,7 @@ if __name__ == '__main__':
         findHint = ''
         name2 = "The Robot"
         while findHint == '':
-            secret = formatWord()
+            secret = formatWord().upper()
             findHint = getHint(secret)
         usedHint = False
         spacing()
@@ -66,7 +87,7 @@ if __name__ == '__main__':
         time.sleep(5)
     else:
         name2 = input('WordMaker Name: ')
-        secret = input('Alright ' + name2 + ", what's the secret word: ").lower()
+        secret = input('Alright ' + name2 + ", what's the secret word: ").upper()
 
     spacing()
     print("Let's play hangman!")
@@ -82,34 +103,58 @@ if __name__ == '__main__':
     lettersGuessed = ''
     while tries > 0:
         print()
-        print(wordGuessed)
+        print("SECRET WORD --->  " + wordGuessed + "  <--- SECRET WORD")
         print()
-        print("You have " + str(tries) + " remaining.")
+        print("You have " + str(tries) + " tries remaining.")
         print()
         print("Letters Guessed: " + lettersGuessed.upper())
         print()
         if makerChoice == 'R' and usedHint is False:
             guess = input(
-                'Guess (type "quit" to exit, or "hint" to view \nthe definition for 50% of your tries): ').lower()
+                'Enter any letter to guess.\nEnter "solve" to try to solve the puzzle.'
+                '\nEnter "hint" to sacrifice 1/2 of your wishes to see the definition.\nEnter "quit" to quit.\n').upper()
         else:
-            guess = input('Guess (type "quit" to exit): ').lower()
-        if guess == 'quit':
+            guess = input('Enter any letter to guess.\nEnter "solve" to try to solve the puzzle.\nEnter "quit" to '
+                          'quit.\n').upper()
+        if guess == 'QUIT':
             tries = 0
             break
-        elif guess == 'hint' and usedHint is False:
+        elif guess == 'HINT' and usedHint is False:
             spacing()
             print("You have 10 seconds to view the definition of " + wordGuessed + ": ")
             print()
             print(findHint)
             time.sleep(10)
             usedHint = True
-            tries /= 2
-        elif guess == 'hint' and usedHint is True:
+            tries = int(tries / 2)
+        elif guess == 'HINT' and usedHint is True:
             spacing()
             print("You've already used your hint!!")
             time.sleep(2)
+        elif guess == 'SOLVE':
+            spacing()
+            print("You've chosen to SOLVE the puzzle. Input guess below: ")
+            solve = input()
+            if solve.upper() == secret.upper():
+                tries = 0
+                guesserWin(secret)
+                break
+            else:
+                tries -= 1
+                print()
+                print("Incorrect! Tries Remaining: ", tries)
+                time.sleep(2)
+        elif len(guess) > 1:
+            spacing()
+            print("You can only guess one letter per try!")
+            time.sleep(2)
         else:
-            if guess not in secret:
+            if guess in lettersGuessed:
+                print()
+                print('You have already guessed this word.')
+                time.sleep(2)
+            elif guess not in secret:
+                lettersGuessed += guess
                 tries -= 1
                 if tries == 0:
                     spacing()
@@ -119,11 +164,9 @@ if __name__ == '__main__':
                     print("-=-=-=-=-=-=-         " + name2 + " Wins!         -=-=-=-=-=-=-")
                     time.sleep(5)
                 else:
+                    print()
                     print("Incorrect! Tries Remaining: ", tries)
                     time.sleep(2)
-            elif guess in lettersGuessed:
-                print('You have already guessed this word.')
-                time.sleep(1)
             elif guess in secret:
                 lettersGuessed += guess
                 instances = 0
@@ -131,14 +174,11 @@ if __name__ == '__main__':
                     if secret[index:index + 1] == guess:
                         wordGuessed = wordGuessed[:index] + guess + wordGuessed[index + 1:]
                         instances += 1
-                print("Correct!", instances, "Letter(s) Found!")
+                print()
+                print("Correct!\n" + str(instances) + " Letter(s) Found!")
                 time.sleep(2)
                 if wordGuessed == secret:
                     tries = 0
-                    spacing()
-                    print("-=-=-=-=-=-=-   Correct! The Secret Word Was:   -=-=-=-=-=-=-")
-                    print("-=-=-=-=-=-=-          " + secret + "           -=-=-=-=-=-=-")
-                    print("-=-=-=-=-=-=-        " + name1 + " Wins!        -=-=-=-=-=-=-")
-                    time.sleep(5)
+                    guesserWin(secret)
                     break
         spacing()
